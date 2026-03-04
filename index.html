@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>盐系衣橱</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+      background-color: #F7F7F7;
+      color: #4A4A4A;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      padding-bottom: 70px;
+    }
+
+    /* 首页样式 */
+    .home-page {
+      padding: 20px;
+    }
+
+    .quote-card {
+      background: linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%);
+      border-radius: 28px;
+      padding: 30px 20px;
+      margin-bottom: 16px;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+    }
+
+    .healing-quote {
+      font-size: 16px;
+      font-weight: 300;
+      color: #4A4A4A;
+      line-height: 1.8;
+      letter-spacing: 1px;
+    }
+
+    .weather-card {
+      background-color: #FFFFFF;
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.03);
+      margin-bottom: 16px;
+    }
+
+    .weather-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .location-text {
+      font-size: 16px;
+      color: #4A4A4A;
+      font-weight: 400;
+    }
+
+    .temperature-text {
+      font-size: 32px;
+      color: #4A4A4A;
+      font-weight: 300;
+    }
+
+    .weather-desc {
+      font-size: 14px;
+      color: #999999;
+      margin-bottom: 20px;
+    }
+
+    .suggestion-label {
+      font-size: 12px;
+      color: #999999;
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+
+    .suggestion-text {
+      font-size: 15px;
+      color: #4A4A4A;
+      line-height: 1.8;
+      font-weight: 300;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .action-item {
+      background-color: #FFFFFF;
+      border-radius: 20px;
+      padding: 20px 12px;
+      text-align: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .action-item:active {
+      transform: scale(0.95);
+    }
+
+    .action-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .action-text {
+      display: block;
+      font-size: 12px;
+      color: #4A4A4A;
+      font-weight: 300;
+    }
+
+    /* 衣橱页面样式 */
+    .gallery-page, .add-page {
+      display: none;
+      padding: 20px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 300;
+      color: #4A4A4A;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 40px;
+    }
+
+    .empty-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      display: block;
+      font-size: 20px;
+      color: #4A4A4A;
+      margin-bottom: 10px;
+      font-weight: 300;
+    }
+
+    .empty-desc {
+      display: block;
+      font-size: 14px;
+      color: #999999;
+      margin-bottom: 30px;
+    }
+
+    .empty-btn {
+      background-color: #4A4A4A;
+      color: #FFFFFF;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    /* 底部导航栏 */
+    .tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background-color: #FFFFFF;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    .tabbar-item {
+      text-align: center;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .tabbar-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .tabbar-text {
+      font-size: 11px;
+      color: #999999;
+    }
+
+    .tabbar-item.active .tabbar-text {
+      color: #4A4A4A;
+    }
+
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- 首页 -->
+    <div class="home-page page active" id="homePage">
+      <div class="quote-card">
+        <p class="healing-quote" id="quote">「代码会撒谎，但身体不会。听听它的声音。」</p>
+      </div>
+
+      <div class="weather-card">
+        <div class="weather-header">
+          <span class="location-text" id="location">获取中...</span>
+          <span class="temperature-text" id="temperature">--°C</span>
+        </div>
+        <div class="weather-desc" id="weatherDesc">正在获取天气信息</div>
+        <div style="border-top: 1px solid #E8E8E8; padding-top: 16px;">
+          <div class="suggestion-label">今日穿搭建议</div>
+          <div class="suggestion-text" id="suggestion">加载中...</div>
+        </div>
+      </div>
+
+      <div class="quick-actions">
+        <div class="action-item" onclick="switchPage('gallery')">
+          <div class="action-icon">👔</div>
+          <span class="action-text">我的衣橱</span>
+        </div>
+        <div class="action-item" onclick="switchPage('add')">
+          <div class="action-icon">📷</div>
+          <span class="action-text">添加衣物</span>
+        </div>
+        <div class="action-item" onclick="loadWeather()">
+          <div class="action-icon">🔄</div>
+          <span class="action-text">刷新天气</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 衣橱页面 -->
+    <div class="gallery-page page" id="galleryPage">
+      <h2 class="page-title">我的衣橱</h2>
+      <div class="empty-state">
+        <div class="empty-icon">👔</div>
+        <span class="empty-title">衣橱还是空的</span>
+        <span class="empty-desc">添加第一件衣物，开始记录你的穿搭故事</span>
+        <div class="empty-btn" onclick="switchPage('add')">添加衣物</div>
+      </div>
+    </div>
+
+    <!-- 添加页面 -->
+    <div class="add-page page" id="addPage">
+      <h2 class="page-title">添加衣物</h2>
+      <div class="empty-state">
+        <div class="empty-icon">📷</div>
+        <span class="empty-title">拍照或选择图片</span>
+        <span class="empty-desc">记录每一件心爱的衣物</span>
+        <div class="empty-btn" onclick="alert('请在微信小程序中使用此功能')">选择图片</div>
+      </div>
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="tabbar">
+      <div class="tabbar-item active" onclick="switchPage('home')">
+        <div class="tabbar-icon">🏠</div>
+        <div class="tabbar-text">今日</div>
+      </div>
+      <div class="tabbar-item" onclick="switchPage('gallery')">
+        <div class="tabbar-icon">👔</div>
+        <div class="tabbar-text">衣橱</div>
+      </div>
+      <div class="tabbar-item" onclick="switchPage('add')">
+        <div class="tabbar-icon">➕</div>
+        <div class="tabbar-text">添加</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 治愈金句库
+    const quotes = [
+      '代码会撒谎，但身体不会。听听它的声音。',
+      '今天穿喜欢的衣服，是对自己最好的温柔。',
+      '你的身体值得被好好对待，从选择舒适的衣物开始。',
+      '不必追赶潮流，你本身就是风格。',
+      '简单的生活，从简单的衣橱开始。',
+      '衣服是自我的延伸，让它与你一起呼吸。'
+    ];
+
+    // 穿搭建议
+    const suggestions = {
+      cold: ['建议穿上你那件 MUJI 连帽羽绒服，保暖又不失简约。', '今天适合厚实的大衣，内搭羊绒衫，温暖有型。'],
+      mild: ['气温舒适，T恤搭配薄外套即可。', '可以试试那件衬衫，单穿或作内搭都很好。'],
+      warm: ['天气转热，透气棉麻是最佳选择。', '简单的T恤就够了，让肌肤感受微风。']
+    };
+
+    // 设置随机金句
+    function setRandomQuote() {
+      const quote = quotes[Math.floor(Math.random() * quotes.length)];
+      document.getElementById('quote').textContent = '「 ' + quote + ' 」';
+    }
+
+    // 获取天气
+    function loadWeather() {
+      setRandomQuote();
+
+      // 模拟天气数据
+      const temp = Math.floor(Math.random() * 25) + 5;
+      const weather = ['晴', '多云', '阴', '小雨'][Math.floor(Math.random() * 4)];
+
+      document.getElementById('location').textContent = '当前位置';
+      document.getElementById('temperature').textContent = temp + '°C';
+      document.getElementById('weatherDesc').textContent = weather;
+
+      // 穿搭建议
+      let suggestion = '';
+      if (temp < 15) {
+        suggestion = suggestions.cold[Math.floor(Math.random() * suggestions.cold.length)];
+      } else if (temp < 25) {
+        suggestion = suggestions.mild[Math.floor(Math.random() * suggestions.mild.length)];
+      } else {
+        suggestion = suggestions.warm[Math.floor(Math.random() * suggestions.warm.length)];
+      }
+
+      document.getElementById('suggestion').textContent = '今日当地气温 ' + temp + '°C，' + suggestion;
+    }
+
+    // 切换页面
+    function switchPage(pageName) {
+      // 隐藏所有页面
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tabbar-item').forEach(t => t.classList.remove('active'));
+
+      // 显示目标页面
+      if (pageName === 'home') {
+        document.getElementById('homePage').classList.add('active');
+        document.querySelectorAll('.tabbar-item')[0].classList.add('active');
+      } else if (pageName === 'gallery') {
+        document.getElementById('galleryPage').classList.add('active');
+        document.querySelectorAll('.tabbar-item')[1].classList.add('active');
+      } else if (pageName === 'add') {
+        document.getElementById('addPage').classList.add('active');
+        document.querySelectorAll('.tabbar-item')[2].classList.add('active');
+      }
+    }
+
+    // 初始化
+    loadWeather();
+  </script>
+</body>
+</html>
